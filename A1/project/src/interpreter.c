@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "shellmemory.h"
-#include "shell.h"OMG BABY
+#include "shell.h"
+#include <ctype.h>
 
 int MAX_ARGS_SIZE = 3;
 
@@ -44,7 +45,7 @@ int interpreter(char *command_args[], int args_size) {
 
     } else if (strcmp(command_args[0], "quit") == 0) {
         //quit
-        if (args_size != 1)
+	if (args_size != 1)
             return badcommand();
         return quit();
 
@@ -64,8 +65,21 @@ int interpreter(char *command_args[], int args_size) {
             return badcommand();
         return source(command_args[1]);
 
-    } else
-        return badcommand();
+    } else if (strcmp(command_args[0], "echo") == 0) {
+	if (args_size != 2)
+	    return badcommand();
+	//printf("%c",command_args[1][0]);
+	if (isalnum(command_args[1][0])){
+	    printf("%s", command_args[1]);
+	    printf("\n");
+	    return 0;}
+	else if (command_args[1][0] == '$'){	
+	   return print(command_args[1]+1);
+	}
+
+	else
+            return badcommand();
+    }
 }
 
 int help() {

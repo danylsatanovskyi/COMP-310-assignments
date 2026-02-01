@@ -3,6 +3,7 @@
 #include <string.h>
 #include "shellmemory.h"
 #include "shell.h"
+#include "ctype.h>
 
 int MAX_ARGS_SIZE = 3;
 
@@ -64,6 +65,13 @@ int interpreter(char *command_args[], int args_size) {
             return badcommand();
         return source(command_args[1]);
 
+    } else if (strcmp(command_args[0], "echo") == 0) {
+	if (args_size != 1)
+	    return badcommand()
+	if isalnum(command_args[0])
+	    return print(command_args[1])
+
+    
     } else
         return badcommand();
 }
