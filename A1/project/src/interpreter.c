@@ -4,6 +4,11 @@
 #include "shellmemory.h"
 #include "shell.h"
 #include <ctype.h>
+#include <dirent.h>
+#include <stdbool.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 
 int MAX_ARGS_SIZE = 3;
 
@@ -24,6 +29,15 @@ int set(char *var, char *value);
 int print(char *var);
 int source(char *script);
 int badcommandFileDoesNotExist();
+
+bool isalphanumeric (const char *str) {
+	for (int i = 0; str[i] != '\0'; i ++) {
+		if (!isalnum((unsigned char) str[i])){
+			return false;
+		}
+	}
+	return true;
+}
 
 // Interpret commands and their arguments
 int interpreter(char *command_args[], int args_size) {
@@ -69,16 +83,30 @@ int interpreter(char *command_args[], int args_size) {
 	if (args_size != 2)
 	    return badcommand();
 	//printf("%c",command_args[1][0]);
-	if (isalnum(command_args[1][0])){
+	if (isalphanumeric(command_args[1])){
 	    printf("%s", command_args[1]);
 	    printf("\n");
 	    return 0;}
-	else if (command_args[1][0] == '$'){	
+	else if (command_args[1][0] == '$' && isalphanumeric(command_args[1]+1) ){	
 	   return print(command_args[1]+1);
 	}
 
 	else
             return badcommand();
+    }
+
+    else if (strcmp(command_args[0], "my_mkdir") == 0) {
+	    if (args_size != 2)
+		    return badcommand();
+	    if (isalphanumeric(command_args[1])){
+	    	int res = mkdir (command_args[1], 0755);
+	    }
+	    else if (command_args[1][0] == '$' && isalphanumeric(command_args[1]+1)){
+		int res = mkdir (command_args[1]+1, 0755);	    
+	    }
+
+	    else
+		return badcommand();
     }
 }
 
