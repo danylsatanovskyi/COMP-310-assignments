@@ -72,7 +72,7 @@ int parseInput(char input[]) {
 
 	command = strtok(input, ";"); //first command
 	while (command != NULL && n <10){
-		while (*command = ' ')
+		while (*command == ' ')
 			command ++; //skip spaces
 		errorCode = parseSingleInput(command); //run individual command
 		command = strtok (NULL, ";");//next command
