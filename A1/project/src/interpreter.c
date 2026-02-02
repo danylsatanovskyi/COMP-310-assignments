@@ -234,15 +234,9 @@ int source(char *script) {
         return badcommandFileDoesNotExist();
     }
 
-    fgets(line, MAX_USER_INPUT - 1, p);
-    while (1) {
+    while (fgets(line, MAX_USER_INPUT - 1, p) != NULL) {
         errCode = parseInput(line);     // which calls interpreter()
         memset(line, 0, sizeof(line));
-
-        if (feof(p)) {
-            break;
-        }
-        fgets(line, MAX_USER_INPUT - 1, p);
     }
 
     fclose(p);

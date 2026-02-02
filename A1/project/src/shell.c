@@ -5,7 +5,7 @@
 #include "shell.h"
 #include "interpreter.h"
 #include "shellmemory.h"
-
+#include <stdbool.h>
 int parseInput(char ui[]);
 int parseSingleInput(char ui[]);
 
@@ -15,20 +15,27 @@ int main(int argc, char *argv[]) {
 
     char prompt = '$';  				// Shell prompt
     char userInput[MAX_USER_INPUT];		// user's input stored here
-    int errorCode = 0;					// zero means no error, default
+    int errorCode = 0;					// zero means no error,	//  default
+    bool batchmode = false;// to know if we're in batch mode
+		       //
+    if (argc == 2)
+	    batchmode = true;
+    	    freopen(argv[2], "r", stdin);// now stdin uses file not prompt
 
     //init user input
     for (int i = 0; i < MAX_USER_INPUT; i++) {
         userInput[i] = '\0';
     }
-    
+
     //init shell memory
     mem_init();
-    while(1) {							
-        printf("%c ", prompt);
+    while(1) {	
+	if (!batchmode)	    
+        	printf("%c ", prompt);
         // here you should check the unistd library 
         // so that you can find a way to not display $ in the batch mode
-        fgets(userInput, MAX_USER_INPUT-1, stdin);
+        if (fgets(userInput, MAX_USER_INPUT-1, stdin)== NULL);
+		break; // exit on end of file
         errorCode = parseInput(userInput);
         if (errorCode == -1) exit(99);	// ignore all other errors
         memset(userInput, 0, sizeof(userInput));
