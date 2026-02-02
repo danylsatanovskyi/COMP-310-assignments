@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-
+#include <unistd.h>
 
 int MAX_ARGS_SIZE = 3;
 
@@ -106,7 +106,7 @@ int interpreter(char *command_args[], int args_size) {
 	}
 	   closedir(dir);
 
-	   for (int i = 0; i<n-1; i ++){//sort files 
+	   for (int i = 0; i<n-1; i ++){//sort files via ascii 
 		   for (int j = i+1; j <n; j ++) {
 			   if (strcmp (files[i], files[j]) > 0){
 					   char *tmp = files[i];
@@ -151,12 +151,40 @@ int interpreter(char *command_args[], int args_size) {
 		}
 			
 		}
+	    else
+		    return badcommand();
 	   
 
 	    }
-
-	    else
+    else if (strcmp(command_args[0], "my_touch") == 0 ){
+	    if (args_size != 2)
+		    return badcommand();
+    	if (isalphanumeric(command_args[1])){
+		FILE * file_pointer; //pointer to file
+		const char *filename = command_args[1];
+		file_pointer = fopen(filename, "w");// assign pointer
+		fclose(file_pointer);
+		return 0;
+	}
+	else
 		return badcommand();
+    
+    }
+
+    else if (strcmp(command_args[0], "my_cd") == 0) {
+	if (args_size != 2)
+		return badcommand();
+	if (isalphanumeric(command_args[1])){
+    	const char *path = command_args[1];
+	if (chdir(path) != 0)
+		printf("Bad command: my_cid\n");
+		return 0;
+	}
+    }
+
+    else
+	    return badcommand();
+	
     
 }
 
