@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 int MAX_ARGS_SIZE = 3;
 
@@ -21,8 +22,9 @@ int badcommand() {
 int badcommandFileDoesNotExist() {
     printf("Bad command: File not found\n");
     return 3;
-}
 
+}
+int run(char *command_args[], int num_of_args);
 int help();
 int quit();
 int set(char *var, char *value);
@@ -181,6 +183,9 @@ int interpreter(char *command_args[], int args_size) {
 		return 0;
 	}
     }
+    else if (strcmp (command_args[0], "run") == 0) {
+    	return run(command_args, args_size);
+    }
 
     else
 	    return badcommand();
@@ -242,4 +247,25 @@ int source(char *script) {
     fclose(p);
 
     return errCode;
+}
+
+int run (char *command_arguments[], int num_of_args) {
+	pid_t pid = fork();//create new process 
+	if (pid == 0){ //child process
+		char *args[num_of_args]; //used to store commands after run
+					      //
+		for (int i=1; i< num_of_args; i++)
+			args[i-1] = command_arguments[i];//stored commands
+
+		//make args array end with NULL for execvp
+		args[num_of_args-1] = NULL;
+
+		execvp(args[0], args);//replace process with program from command arg
+	}
+	else if (pid > 0){
+		int status;
+		wait(&status); //wait returns and status variable contains info about how the child process went
+	}
+
+	return 0;
 }
