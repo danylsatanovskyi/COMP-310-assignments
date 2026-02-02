@@ -16,12 +16,8 @@ int main(int argc, char *argv[]) {
     char prompt = '$';  				// Shell prompt
     char userInput[MAX_USER_INPUT];		// user's input stored here
     int errorCode = 0;					// zero means no error,	//  default
-    bool batchmode = false;// to know if we're in batch mode
+    bool batchmode = !(isatty(STDIN_FILENO));// to know if file descriptor is terminal or not (batch)
 		       //
-    if (argc == 2)
-	    batchmode = true;
-    	    freopen(argv[2], "r", stdin);// now stdin uses file not prompt
-
     //init user input
     for (int i = 0; i < MAX_USER_INPUT; i++) {
         userInput[i] = '\0';
@@ -34,7 +30,7 @@ int main(int argc, char *argv[]) {
         	printf("%c ", prompt);
         // here you should check the unistd library 
         // so that you can find a way to not display $ in the batch mode
-        if (fgets(userInput, MAX_USER_INPUT-1, stdin)== NULL);
+        if (fgets(userInput, MAX_USER_INPUT-1, stdin)== NULL)
 		break; // exit on end of file
         errorCode = parseInput(userInput);
         if (errorCode == -1) exit(99);	// ignore all other errors
