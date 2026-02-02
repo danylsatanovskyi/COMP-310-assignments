@@ -95,19 +95,69 @@ int interpreter(char *command_args[], int args_size) {
             return badcommand();
     }
 
-    else if (strcmp(command_args[0], "my_mkdir") == 0) {
+    else if (strcmp(command_args[0], "my_ls") == 0) {
+	   DIR *dir = opendir("."); //current dir
+	   struct dirent *entry; //directory entry struct
+	   char *files[256]; //files array
+	   int n = 0;
+
+	   while ((entry = readdir(dir)) != NULL) {//read directory names
+		   files [n++] = strdup(entry->d_name);//store names in array
+	}
+	   closedir(dir);
+
+	   for (int i = 0; i<n-1; i ++){//sort files 
+		   for (int j = i+1; j <n; j ++) {
+			   if (strcmp (files[i], files[j]) > 0){
+					   char *tmp = files[i];
+					   files [i] = files[j];
+					   files[j] = tmp;
+					   
+			   }
+		   }
+
+	   }
+
+	   for (int i = 0; i <n; i++){
+		   printf("%s\n", files[i]);
+	   }
+
+	   return 0;
+    }
+
+
+
+	   
+
+   else if (strcmp(command_args[0], "my_mkdir") == 0) {
 	    if (args_size != 2)
 		    return badcommand();
 	    if (isalphanumeric(command_args[1])){
 	    	int res = mkdir (command_args[1], 0755);
 	    }
 	    else if (command_args[1][0] == '$' && isalphanumeric(command_args[1]+1)){
-		int res = mkdir (command_args[1]+1, 0755);	    
+		char *name = mem_get_value(command_args[1]+1);
+
+		if (name != NULL && isalphanumeric(name)){
+			mkdir(name, 0755);
+			return 0;
+
+		}
+
+		else{
+		
+			printf("Bad command: my_mkdir\n");
+			return 0;
+		}
+			
+		}
+	   
+
 	    }
 
 	    else
 		return badcommand();
-    }
+    
 }
 
 int help() {
