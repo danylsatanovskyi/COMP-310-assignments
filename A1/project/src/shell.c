@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 
-//#include <unistd.h>
+#include <unistd.h>
 #include "shell.h"
 #include "interpreter.h"
 #include "shellmemory.h"
 
 int parseInput(char ui[]);
+int parseSingleInput(char ui[]);
 
 // Start of everything
 int main(int argc, char *argv[]) {
@@ -42,7 +43,7 @@ int wordEnding(char c) {
     return c == '\0' || c == '\n' || c == ' ';
 }
 
-int parseInput(char inp[]) {
+int parseSingleInput(char inp[]) {//renamed to parseSingleInput to use as helper
     char tmp[200], *words[100];                            
     int ix = 0, w = 0;
     int wordlen;
@@ -61,4 +62,22 @@ int parseInput(char inp[]) {
     }
     errorCode = interpreter(words, w);
     return errorCode;
+}
+
+int parseInput(char input[]) {
+
+	char *command;
+	int n = 0;
+	int errorCode = 0;
+
+	command = strtok(input, ";"); //first command
+	while (command != NULL && n <10){
+		while (*command = ' ')
+			command ++; //skip spaces
+		errorCode = parseSingleInput(command); //run individual command
+		command = strtok (NULL, ";");//next command
+		n++;
+	}
+	return errorCode; //return error code
+
 }
